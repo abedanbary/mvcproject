@@ -1,0 +1,26 @@
+﻿@model IEnumerable<idefny.Models.Users>
+
+<h2>إدارة المستخدمين</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <td>Email</td>
+            <th>function</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+                <td>
+                    <a href="@Url.Action("ChangePassword", "Admin", new { id = user.Id })" class="btn btn-warning">Change password</a>
+                    <a href="@Url.Action("Delete", "Admin", new { id = user.Id })" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,185 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<style>
+    /* General Styles */
+    body {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-image: url('/images/library.jpg'); /* Path to your image in wwwroot/images */
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        color: #333;
+    }
+
+    /* Overlay for better readability */
+    .overlay {
+        background-color: rgba(255, 255, 255, 0.95); /* Semi-transparent white */
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .header {
+        background: linear-gradient(135deg, #2c3e50, #34495e); /* Gradient background */
+        color: white;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+        .header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+    .content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    .card {
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+    .card-header {
+        background: linear-gradient(135deg, #3498db, #2980b9); /* Gradient background */
+        color: white;
+        padding: 25px;
+        text-align: center;
+    }
+
+        .card-header h2 {
+            font-size: 24px;
+            margin: 0;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+    .card-body {
+        padding: 25px;
+    }
+
+        .card-body p {
+            color: #555;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+    .btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        background: linear-gradient(135deg, #3498db, #2980b9); /* Gradient background */
+        color: white;
+        padding: 15px;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        margin-bottom: 15px;
+    }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #2980b9, #3498db); /* Reverse gradient on hover */
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn i {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+    footer {
+        text-align: center;
+        padding: 20px;
+        background-color: #2c3e50;
+        color: white;
+        font-size: 0.9em;
+        margin-top: 50px;
+        box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+        footer a {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+            footer a:hover {
+                color: #d3f3d3;
+                text-decoration: none;
+            }
+</style>
+
+<div class="overlay">
+    <div class="header">
+        <h1>Admin Dashboard</h1>
+    </div>
+
+    <div class="content">
+        <!-- User Management Section -->
+        <div class="card">
+            <div class="card-header">
+                <h2>User Management</h2>
+            </div>
+            <div class="card-body">
+                <p>Manage users with the following actions. You can view, delete, or change passwords for users.</p>
+                <a href="@Url.Action("Index", "Admin")" class="btn">
+                    <i class="fas fa-users-cog"></i> Manage Users
+                </a>
+                <a href="@Url.Action("AllOrders", "BookBorrow")" class="btn">
+                    <i class="fas fa-list-alt"></i> All Orders
+                </a>
+            </div>
+        </div>
+
+        <!-- Book Management Section -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Book Management</h2>
+            </div>
+            <div class="card-body">
+                <p>Manage books easily with the following options to create, edit, or delete books in the system.</p>
+                <a href="@Url.Action("Create", "Book")" class="btn">
+                    <i class="fas fa-plus-circle"></i> Create New Book
+                </a>
+                <a href="@Url.Action("ManageBooks", "Admin")" class="btn">
+                    <i class="fas fa-book"></i> Manage System Books
+                </a>
+                <a href="@Url.Action("Index", "Book")" class="btn">
+                    <i class="fas fa-book-open"></i> View All Books
+                </a>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<!-- FontAwesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+

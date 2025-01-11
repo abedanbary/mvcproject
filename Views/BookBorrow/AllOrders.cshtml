@@ -1,0 +1,70 @@
+﻿@model List<idefny.Models.Order>
+
+@{
+    ViewData["Title"] = "All Orders";
+}
+
+<link rel="stylesheet" href="~/css/orders.css" />
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">All Orders</h2>
+
+    @if (Model.Any())
+    {
+        <div class="order-list">
+            @foreach (var order in Model)
+            {
+                <div class="order-item card mb-4 shadow-sm">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title mb-0">Order #@order.Id</h5>
+                            <p class="mb-0">User: @order.UserId</p>
+                            <p class="mb-0">Date: @order.OrderDate.ToString("yyyy-MM-dd HH:mm")</p>
+                        </div>
+                        <button class="btn btn-light btn-details" type="button" data-bs-toggle="collapse" data-bs-target="#orderDetails-@order.Id" aria-expanded="false" aria-controls="orderDetails-@order.Id">
+                            View Details
+                        </button>
+                    </div>
+
+                    <div class="collapse" id="orderDetails-@order.Id">
+                        <div class="card-body">
+                            <h6 class="mb-3">Items:</h6>
+                            <table class="table table-hover">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Book</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                        <th>Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in order.OrderItems)
+                                    {
+                                        <tr>
+                                            <td>@item.Book?.Name</td>
+                                            <td>@item.Quantity</td>
+                                            <td>@item.Price.ToString("C", new System.Globalization.CultureInfo("he-IL"))</td>
+                                            <td>@(item.IsBuying ? "Purchase" : "Rental")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            <div class="text-end">
+                                <strong>Total: @order.TotalPrice.ToString("C", new System.Globalization.CultureInfo("he-IL"))</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">No orders found.</div>
+    }
+</div>
+
+@section Scripts {
+    <script src="~/js/orders.js"></script>
+}

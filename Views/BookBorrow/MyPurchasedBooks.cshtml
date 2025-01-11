@@ -1,0 +1,240 @@
+﻿@model IEnumerable<idefny.Models.UserBook>
+
+@{
+    ViewData["Title"] = "My Purchased Books";
+}
+<style>
+    /* General Styles */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f5f5f5;
+        color: #333;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .page-title {
+        text-align: center;
+        font-size: 2.5rem;
+        color: #4CAF50;
+        margin-bottom: 40px;
+        font-weight: 600;
+    }
+
+    .books-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .book-card {
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .book-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+    .book-image img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        border-bottom: 3px solid #4CAF50;
+    }
+
+    .book-details {
+        padding: 20px;
+    }
+
+    .book-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .book-author {
+        font-size: 1.1rem;
+        color: #777;
+        margin-bottom: 15px;
+    }
+
+    .book-info {
+        font-size: 0.95rem;
+        color: #555;
+        margin-bottom: 5px;
+    }
+
+    .book-actions {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: none;
+        color: #fff;
+    }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+    .read-online {
+        background: #007BFF;
+    }
+
+        .read-online:hover {
+            background: #0056b3;
+        }
+
+    .download-pdf {
+        background: #4CAF50;
+    }
+
+        .download-pdf:hover {
+            background: #45a049;
+        }
+
+    .download-f2b {
+        background: #FF9800;
+    }
+
+        .download-f2b:hover {
+            background: #e68900;
+        }
+
+    .remove-btn {
+        background: #ff4d4d;
+    }
+
+        .remove-btn:hover {
+            background: #cc0000;
+        }
+
+    .alert {
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .alert-info {
+        background: #e3f2fd;
+        color: #1976d2;
+    }
+
+    .text-danger {
+        color: #ff4d4d;
+        text-align: center;
+    }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<div class="container">
+    <h2 class="page-title">@ViewData["Title"]</h2>
+
+    @if (ViewBag.Message != null)
+    {
+        <div class="alert alert-info">
+            <strong>@ViewBag.Message</strong>
+        </div>
+    }
+
+    @if (Model.Any())
+    {
+        <div class="books-grid">
+            @foreach (var userBook in Model)
+            {
+                <div class="book-card">
+                    <!-- Book Image -->
+                    <div class="book-image">
+                        <img src="@Url.Content(userBook.Book.ImageUrl ?? "/images/default.jpg")" alt="Book Cover" />
+                    </div>
+
+                    <!-- Book Details -->
+                    <div class="book-details">
+                        <h3 class="book-title">@userBook.Book.Name</h3>
+                        <p class="book-author">By @userBook.Book.Author</p>
+                        <p class="book-info"><strong>Published:</strong> @userBook.Book.DatePublished.ToString("yyyy-MM-dd")</p>
+                        <p class="book-info"><strong>Purchased:</strong> @userBook.PurchaseDate.ToString("MMMM dd, yyyy")</p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="book-actions">
+                        @if (!string.IsNullOrEmpty(userBook.Book.PdfUrl))
+                        {
+                            <button class="btn read-online" onclick="window.open('@Url.Content(userBook.Book.PdfUrl)', '_blank')">
+                                <i class="fas fa-book-open"></i> Read Online
+                            </button>
+                            <button class="btn download-pdf" onclick="downloadFile('@Url.Content(userBook.Book.PdfUrl)', '@userBook.Book.Name')">
+                                <i class="fas fa-file-pdf"></i> Download PDF
+                            </button>
+                            <button class="btn download-f2b" onclick="convertAndDownload('@Url.Content(userBook.Book.PdfUrl)', '@userBook.Book.Name')">
+                                <i class="fas fa-file-alt"></i> Download F2B
+                            </button>
+                        }
+                        else
+                        {
+                            <p class="text-danger">PDF not available.</p>
+                        }
+
+                        <!-- Remove from Library -->
+                        <form asp-action="Removebook" method="post" class="remove-form">
+                            <input type="hidden" name="borrowedBookId" value="@userBook.Id" />
+                            <button type="submit" class="btn remove-btn">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <strong>No purchased books found.</strong>
+        </div>
+    }
+</div>
+
+<script>function downloadFile(url, fileName) {
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName + '.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function convertAndDownload(url, fileName) {
+        // Simulate F2B conversion (replace with actual logic)
+        const f2bUrl = url.replace('.pdf', '.f2b');
+        const link = document.createElement('a');
+        link.href = f2bUrl;
+        link.download = fileName + '.f2b';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }</script>

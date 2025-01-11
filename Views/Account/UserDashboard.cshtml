@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: url('/images/library.jpg'); /* Background image from your assets */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+        }
+
+        .dashboard-container {
+            max-width: 700px;
+            margin: 100px auto;
+            padding: 30px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: #ddd;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+            .actions .btn {
+                font-size: 1.1rem;
+                padding: 12px 25px;
+                border-radius: 8px;
+                border: none;
+                transition: all 0.3s ease;
+                background-color: #007bff;
+                color: #fff;
+            }
+
+                .actions .btn:hover {
+                    background-color: #0056b3;
+                }
+
+        footer {
+            margin-top: 40px;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <h1>Welcome to Your Library</h1>
+            <p>Explore your borrowed books, purchased books, and waitlists with ease.</p>
+        </div>
+
+        <div class="actions">
+            <a href="@Url.Action("MyBorrowedBooks", "BookBorrow")" class="btn">My Borrowed Books</a>
+            <a href="@Url.Action("MyPurchasedBooks", "BookBorrow")" class="btn">My Purchased Books</a>
+            <a href="@Url.Action("MyWaitlist", "BookBorrow")" class="btn">My Waitlist</a>
+            <a href="@Url.Action("UserOrders", "BookBorrow")" class="btn">My orders</a>
+        </div>
+    </div>
+
+ 
+</body>
+</html>
+
+

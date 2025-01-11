@@ -1,0 +1,165 @@
+﻿@page
+@{
+    var price = ViewBag.Price ?? 0; // السعر
+    var bookId = ViewBag.BookId; // معرف الكتاب
+}
+
+<!-- تحميل مكتبة PayPal -->
+<script src="https://www.paypal.com/sdk/js?client-id=@(ViewBag.PaypalClientId)&currency=USD"></script>
+
+<!-- تحميل مكتبة Font Awesome للرموز -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<!-- أنماط مخصصة -->
+<style>
+    .payment-container {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background: #ffffff;
+    }
+
+    .payment-header {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+        .payment-header h2 {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-header h3 {
+            font-size: 1.5rem;
+            color: #27ae60;
+        }
+
+    .payment-alert {
+        margin-bottom: 1.5rem;
+    }
+
+    .paypal-button-container {
+        text-align: center;
+    }
+
+    .btn-close {
+        position: absolute;
+        right: 1rem;
+        top: 1rem;
+    }
+</style>
+
+<!-- واجهة الدفع -->
+<div class="payment-container">
+    <!-- عنوان الصفحة -->
+    <div class="payment-header">
+        <h2>الدفع</h2>
+        <h3>المبلغ الإجمالي: $@price.ToString("0.00")</h3>
+    </div>
+
+    <!-- حاوية الإشعارات -->
+    <div id="notification-container" class="payment-alert"></div>
+
+    <!-- حاوية أزرار PayPal -->
+    <div id="paypal-button-container" class="paypal-button-container"></div>
+</div>
+
+<!-- البرنامج النصي لربط PayPal -->
+<script>
+    // تهيئة أزرار PayPal
+    paypal.Buttons({
+        // إنشاء الطلب
+        async createOrder() {
+            try {
+                const response = await fetch('@Url.Action("CreateOrder", "Checkout")', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        amount: @price // استخدام السعر
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error("فشل في إنشاء الطلب.");
+                }
+
+                const order = await response.json();
+                return order.id; // إرجاع معرف الطلب إلى PayPal
+            } catch (error) {
+                console.error("خطأ في إنشاء الطلب:", error);
+                showAlert("danger", "فشل في إنشاء الطلب. يرجى المحاولة مرة أخرى.");
+                throw error; // إعادة رمي الخطأ لمنع PayPal من المتابعة
+            }
+        },
+
+        // عند الموافقة على الدفع
+        onApprove: async function (data) {
+            try {
+                const response = await fetch('@Url.Action("BuyBookNow", "Store")', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        bookId: @bookId // معرف الكتاب
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error("فشل في إكمال الطلب.");
+                }
+
+                const details = await response.json();
+                if (details.success) {
+                    showAlert("success", "تم إكمال الطلب! تمت عملية الدفع بنجاح.");
+                } else {
+                    throw new Error("فشل في الدفع.");
+                }
+            } catch (error) {
+                console.error("خطأ في إكمال الطلب:", error);
+                showAlert("danger", "حدثت مشكلة أثناء إكمال طلبك.");
+            }
+        },
+
+        // عند إلغاء الدفع
+        onCancel(data) {
+            showAlert("warning", "تم إلغاء الدفع! قمت بإلغاء عملية الدفع.");
+        },
+
+        // عند حدوث خطأ في الدفع
+        onError(err) {
+            console.error("خطأ في PayPal: ", err);
+            showAlert("danger", "حدث خطأ ما أثناء عملية الدفع.");
+        }
+    }).render("#paypal-button-container"); // عرض أزرار PayPal في الحاوية
+
+    // دالة لعرض الإشعارات
+    function showAlert(type, message) {
+        const alertClass = {
+            success: "alert-success",
+            warning: "alert-warning",
+            danger: "alert-danger"
+        }[type] || "alert-info";
+
+        const icon = {
+            success: "fa-check-circle",
+            warning: "fa-exclamation-triangle",
+            danger: "fa-times-circle"
+        }[type] || "fa-info-circle";
+
+        const alertHtml = `
+            <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                <i class="fas ${icon} me-2"></i>
+                <strong>${message}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+
+        document.getElementById("notification-container").innerHTML = alertHtml;
+    }
+</script>

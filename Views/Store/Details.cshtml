@@ -1,0 +1,400 @@
+﻿@model idefny.ViewModels.BookDetailsViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+<style>
+    /* General Styles */
+    body {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-image: url('/images/library.jpg');
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        color: #333;
+    }
+
+    .container {
+        background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+        border-radius: 20px;
+        padding: 40px;
+        margin-top: 50px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 20px;
+        font-size: 2.5rem;
+    }
+
+    hr {
+        border-top: 2px solid #4CAF50;
+        margin: 20px 0;
+    }
+
+    .rating {
+        display: inline-flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+        .rating .fa-star,
+        .rating .fa-star-half-alt {
+            font-size: 1.8rem;
+            margin-right: 0.3rem;
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+            .rating .fa-star.text-warning {
+                color: #ffc107;
+            }
+
+            .rating .fa-star.text-muted {
+                color: #e4e5e9;
+            }
+
+            .rating .fa-star:hover {
+                transform: scale(1.2);
+            }
+
+    .btn-group form {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .btn {
+        font-size: 1rem;
+        padding: 10px 20px;
+        border-radius: 30px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-transform: capitalize;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        border: none;
+        font-weight: 600;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+        color: #2c3e50;
+    }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+            transform: scale(1.05);
+        }
+
+    .btn-primary {
+        background-color: #007BFF;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+    .btn-danger {
+        background-color: #e74c3c;
+        color: white;
+    }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+            transform: scale(1.05);
+        }
+
+    .alert {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 10px;
+        font-size: 1rem;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+    }
+
+    .review-card {
+        background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .review-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .review-card h5 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .review-card small {
+            color: #6c757d;
+        }
+
+    .form-group label {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .form-control {
+        border-radius: 15px;
+        border: 1px solid #ced4da;
+        padding: 12px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .form-control:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+        }
+
+    .btn-submit {
+        background-color: #4CAF50;
+        color: white;
+        font-weight: 600;
+    }
+
+        .btn-submit:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+    .book-image {
+        border-radius: 20px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
+    }
+
+        .book-image:hover {
+            transform: scale(1.05);
+        }
+
+    .price-tag {
+        background-color: #4CAF50;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 15px;
+    }
+
+    .back-to-store {
+        margin-top: 30px;
+        text-align: center;
+    }
+
+        .back-to-store a {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #007BFF;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+            .back-to-store a:hover {
+                color: #0056b3;
+            }
+</style>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<div class="container my-5">
+    <div class="row">
+        <!-- Book Image -->
+        <div class="col-md-5">
+            <img src="@Url.Content(Model.Book.ImageUrl ?? "/images/default.jpg")"
+                 alt="Book Image"
+                 class="img-fluid rounded shadow-sm book-image"
+                 style="max-height: 400px; object-fit: cover;" />
+        </div>
+
+        <!-- Book Details -->
+        <div class="col-md-7">
+            <h1>@Model.Book.Name</h1>
+            <hr />
+            <div class="rating">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    if (i <= Math.Floor(Model.raebook))
+                    {
+                        <i class="fa fa-star text-warning"></i>
+                    }
+                    else if (i - Model.raebook < 1)
+                    {
+                        <i class="fa fa-star-half-alt text-warning"></i>
+                    }
+                    else
+                    {
+                        <i class="fa fa-star text-muted"></i>
+                    }
+                }
+            </div>
+
+            <p><strong>Author:</strong> @Model.Book.Author</p>
+            <p><strong>Genre:</strong> @Model.Book.Genre</p>
+
+            @if (Model.Book.DiscountEndDate < DateTime.UtcNow)
+            {
+                <div class="price-tag">Price: @Model.Book.Price.ToString("C", new System.Globalization.CultureInfo("he-IL"))</div>
+                <div class="price-tag">Borrow Price: @((Model.Book.DiscountedPrice * 0.2m).ToString("C", new System.Globalization.CultureInfo("he-IL")))</div>
+            }
+            else
+            {
+                <div class="price-tag">Price: @Model.Book.DiscountedPrice.ToString("C", new System.Globalization.CultureInfo("he-IL"))</div>
+                <div class="price-tag">Borrow Price: @((Model.Book.DiscountedPrice * 0.2m).ToString("C", new System.Globalization.CultureInfo("he-IL")))</div>
+            }
+
+            <p><strong>Published On:</strong> @Model.Book.DatePublished.ToString("yyyy-MM-dd")</p>
+            <p><strong>Copies Available:</strong> @Model.Book.NumberOfCopies</p>
+            <p><strong>Copies Available for Borrow:</strong> @Model.Book.AvailableForBorrow</p>
+
+            <!-- Add to Cart Buttons -->
+            @if (Model.Book.NumberOfCopies > 0)
+            {
+                <div class="btn-group">
+                    <form action="@Url.Action("AddToCart", "Cart")" method="post" style="display: inline-block; margin-left: 10px;">
+                        <input type="hidden" name="bookId" value="@Model.Book.Id" />
+                        <input type="hidden" name="IsBuying2" value="true" />
+                        <button type="submit" class="btn btn-warning">Add to Cart for Buying</button>
+                    </form>
+                    <form action="/Checkout/Index2" method="get" style="display: inline;">
+                            <input type="hidden" name="bookId" value="@Model.Book.Id" />
+                            <button type="submit" class="btn btn-primary">Buy Now</button>
+                        </form>
+
+                    @if (Model.Book.AvailableForBorrow > 0)
+                    {
+                        <form action="@Url.Action("AddToCart", "Cart")" method="post" style="display: inline-block;">
+                            <input type="hidden" name="bookId" value="@Model.Book.Id" />
+                            <input type="hidden" name="IsBuying2" value="false" />
+                            <button type="submit" class="btn btn-primary">Add to Cart for Borrowing</button>
+                        </form>
+                       
+
+                       
+
+                    }
+                    else
+                    {
+                        <form method="post" asp-action="Waitlist" asp-route-id="@Model.Book.Id" style="display: inline-block;">
+                            <button type="submit" class="btn btn-warning">Join Waitlist</button>
+                        </form>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="text-danger">Sorry, this book is currently out of stock.</p>
+            }
+
+            <div class="back-to-store">
+                <a href="@Url.Action("Index", "Store")">← Back to Bookstore</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Review Form -->
+<div class="container my-4">
+    <h4>Leave a Review</h4>
+    <form method="post" action="@Url.Action("SubmitReview", "Review")">
+        <input type="hidden" name="BookId" value="@Model.Book.Id" />
+        <div class="form-group">
+            <label for="rating">Rating (1 to 5):</label>
+            <select class="form-control" id="rating" name="Rating" required>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="comment">Your Comment:</label>
+            <textarea class="form-control" id="comment" name="Comment" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-submit mt-3">Submit Review</button>
+    </form>
+</div>
+
+<!-- Reviews Display Section -->
+<div class="container mt-5">
+    <h4>User Reviews</h4>
+    @if (Model.Reviews != null && Model.Reviews.Any())
+    {
+        @foreach (var review in Model.Reviews)
+        {
+            <div class="review-card mb-3 p-3 border rounded">
+                <h5>@review.UserId</h5>
+                <div><strong>Rating:</strong> @review.Rating / 5</div>
+                <div><strong>Comment:</strong> @review.Comment</div>
+                <small class="text-muted">Posted on: @review.CreatedAt.ToString("yyyy-MM-dd")</small>
+            </div>
+        }
+    }
+    else
+    {
+        <p>No reviews yet. Be the first to review this book!</p>
+    }
+</div>
+
+<!-- JavaScript for Interactive Rating -->
+<script>document.addEventListener("DOMContentLoaded", function () {
+        const stars = document.querySelectorAll(".rating .fa-star");
+
+        stars.forEach((star, index) => {
+            star.addEventListener("click", () => {
+                const rating = index + 1;
+                document.getElementById("rating").value = rating;
+
+                stars.forEach((s, i) => {
+                    if (i <= index) {
+                        s.classList.add("text-warning");
+                        s.classList.remove("text-muted");
+                    } else {
+                        s.classList.remove("text-warning");
+                        s.classList.add("text-muted");
+                    }
+                });
+            });
+        });
+    });</script>

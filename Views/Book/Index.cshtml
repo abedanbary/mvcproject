@@ -1,0 +1,269 @@
+﻿@model IEnumerable<idefny.Models.Book>
+
+<style>
+    /* General Styles */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+    }
+
+    h2 {
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        background-color: #ffffff;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+        .table th,
+        .table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .table th {
+            background-color: #3498db;
+            color: white;
+            font-weight: 600;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f1f1f1;
+            transition: background-color 0.3s ease;
+        }
+
+    .btn {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+        border-radius: 25px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        font-weight: 600;
+    }
+
+    .btn-info {
+        background-color: #17a2b8;
+        color: white;
+    }
+
+        .btn-info:hover {
+            background-color: #138496;
+            transform: scale(1.05);
+        }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+        margin: 0 5px;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            transform: scale(1.05);
+        }
+
+    .btn-warning {
+        background-color: #ffc107;
+        color: #2c3e50;
+    }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+            transform: scale(1.05);
+        }
+
+    .btn-success {
+        background-color: #28a745;
+        color: white;
+    }
+
+        .btn-success:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+    .text-success {
+        color: #28a745;
+    }
+
+    .text-danger {
+        color: #dc3545;
+    }
+
+    .modal-content {
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+        background-color: #3498db;
+        color: white;
+        border-radius: 15px 15px 0 0;
+    }
+
+    .modal-title {
+        font-weight: 600;
+    }
+
+    .modal-footer {
+        border-top: none;
+    }
+
+    .btn-group .btn {
+        margin: 5px;
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+
+    .discount-slider {
+        width: 100%;
+        margin: 20px 0;
+    }
+
+    .discount-value {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #3498db;
+        margin-top: 10px;
+    }
+
+    .add-book-btn {
+        display: block;
+        width: 200px;
+        margin: 20px auto;
+        text-align: center;
+    }
+</style>
+
+<h2>Book List</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Author</th>
+            <th>Genre</th>
+            <th>Price</th>
+            <th>Available for Borrow</th>
+            <th>Discount</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var book in Model)
+        {
+            <tr>
+                <td>@book.Name</td>
+                <td>@book.Author</td>
+                <td>@book.Genre</td>
+                <td>@book.Price.ToString("C")</td>
+                <td>
+                    @if (book.AvailableForBorrow > 0)
+                    {
+                        <span class="text-success">Yes</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger">No</span>
+                    }
+                </td>
+                <td>
+                    @if (book.DiscountPercentage2 > 0)
+                    {
+                        <span>@book.DiscountPercentage2 %</span>
+                    }
+                    else
+                    {
+                        <span>No Discount</span>
+                    }
+                </td>
+                <td>
+                    <a href="@Url.Action("Details", "Book", new { id = book.Id })" class="btn btn-info btn-sm">Details</a>
+                    <a href="@Url.Action("Edit", "Book", new { id = book.Id })" class="btn btn-primary btn-sm">Edit</a>
+                    <form asp-action="Delete" method="post" style="display:inline;">
+                        <input type="hidden" name="id" value="@book.Id" />
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this book?');">
+                            Delete
+                        </button>
+                    </form>
+                    <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#DiscountModal" data-id="@book.Id" data-current-discount="@book.DiscountPercentage2">
+                        Set Discount
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Button to Add a New Book -->
+<button class="btn btn-success add-book-btn" onclick="window.location.href='@Url.Action("Create", "Book")'">Add New Book</button>
+
+<!-- Modal for Setting Discount -->
+<div class="modal fade" id="DiscountModal" tabindex="-1" role="dialog" aria-labelledby="DiscountModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="DiscountModalLabel">Set Discount</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post" asp-action="SetDiscount">
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="BookId" />
+                    <div class="form-group">
+                        <label>Select Discount (%)</label>
+                        <input type="range" id="DiscountSlider" class="discount-slider" min="0" max="100" step="1" value="0">
+                        <div class="discount-value" id="DiscountValue">0%</div>
+                        <input type="hidden" name="discount" id="Discount" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Apply Discount</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>// When the modal is opened, set the BookId in the hidden field
+    $('#DiscountModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var bookId = button.data('id'); // Extract the book id from data-attributes
+        var currentDiscount = button.data('current-discount'); // Extract the current discount
+
+        var modal = $(this);
+        modal.find('.modal-body #BookId').val(bookId); // Set the BookId field in the modal
+        modal.find('#DiscountSlider').val(currentDiscount); // Set the slider to the current discount
+        modal.find('#DiscountValue').text(currentDiscount + '%'); // Update the discount value display
+    });
+
+    // Update the discount value display when the slider is moved
+    $('#DiscountSlider').on('input', function () {
+        var discountValue = $(this).val();
+        $('#DiscountValue').text(discountValue + '%');
+        $('#Discount').val(discountValue); // Update the hidden input field
+    });</script>

@@ -1,0 +1,118 @@
+﻿@model idefny.ViewModels.AdminBooksView
+
+@{
+    ViewData["Title"] = "Manage Books";
+}
+
+<!-- Load Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Load CSS -->
+<link rel="stylesheet" href="~/css/admin.css" />
+
+<!-- Load Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+<div class="container">
+    <h2 class="text-center mb-4">Manage Books</h2>
+
+    <!-- Borrowed Books -->
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-book"></i> Borrowed Books
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Book</th>
+                        <th>Borrow Date</th>
+                        <th>Return Date</th>
+                       
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var book in Model.BorrowedBooks)
+                    {
+                        <tr>
+                            <td>@book.User.UserName</td>
+                            <td>@book.Book.Name</td>
+                            <td>@book.BorrowDate.ToShortDateString()</td>
+                            <td>@book.ReturnDate2.ToShortDateString()</td>
+                            
+                        </tr>
+                        <tr id="details-@book.Id" class="hidden-row">
+                            <td colspan="6">
+                                <strong>Additional Details:</strong> You can add any additional details here.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Waitlist -->
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-clock"></i> Waitlist
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Book</th>
+                        <th>Join Date</th>
+                        <th>Borrow Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Waitlist)
+                    {
+                        <tr>
+                            <td>@item.User.UserName</td>
+                            <td>@item.Book.Name</td>
+                            <td>@item.DateJoined.ToShortDateString()</td>
+                            <td>@(item.Dateborrowbook?.ToShortDateString() ?? "Not Borrowed Yet")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Purchased Books -->
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-shopping-cart"></i> Purchased Books
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Book</th>
+                
+                        <th>Purchase Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var book in Model.PurchasedBooks)
+                    {
+                        <tr>
+                            <td>@book.User.UserName</td>
+                            <td>@book.Book.Name</td>
+               
+                            <td>@book.PurchaseDate.ToShortDateString()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Load JavaScript -->
+<script src="~/js/admin.js"></script>

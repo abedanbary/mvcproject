@@ -1,0 +1,135 @@
+﻿@page
+@{
+    // Ensure that the ViewBag.Price is set on the controller side before rendering the view
+    var price = ViewBag.Price ?? 0; // Default to 0 if ViewBag.Price is null
+}
+
+<!-- Load PayPal SDK -->
+<script src="https://www.paypal.com/sdk/js?client-id=@(ViewBag.PaypalClientId)&currency=USD"></script>
+
+<!-- Main Container -->
+<div class="mx-auto p-4 rounded border shadow" style="width: 420px;">
+    <!-- Order Header -->
+    <h2 class="text-center mb-4">Complete Your Order</h2>
+
+    <!-- Total Amount Display -->
+    <h3 class="text-center mb-4 text-success">Total Amount: $@price.ToString("0.00")</h3> <!-- Format price to 2 decimal places -->
+    <!-- Payment Container -->
+    <div class="mx-auto p-4 rounded border shadow">
+        <!-- Notification Container for Alerts -->
+        <div id="notification-container" class="mb-3"></div>
+
+        <!-- PayPal Button Container -->
+        <div id="paypal-button-container"></div>
+    </div>
+</div>
+
+<!-- PayPal Integration Script -->
+<script>
+    // Pass the price from the server to JavaScript
+    var price = @price;
+
+    // Initialize PayPal Buttons
+    paypal.Buttons({
+        // Create Order
+        async createOrder() {
+            try {
+                const response = await fetch('@Url.Action("CreateOrder", "Checkout")', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        amount: price // Use the price variable here
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to create order.");
+                }
+
+                const order = await response.json();
+                return order.id; // Return the order ID to PayPal
+            } catch (error) {
+                console.error("Error creating order:", error);
+                showAlert("danger", "Failed to create order. Please try again.");
+                throw error; // Re-throw to prevent PayPal from proceeding
+            }
+        },
+
+        // On Payment Approval
+        onApprove: async function (data) {
+            try {
+                const response = await fetch('@Url.Action("CompleteOrder", "Checkout")', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ orderID: data.orderID })
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to complete order.");
+                }
+
+                const details = await response.json();
+                if (details === "success") {
+                    showAlert("success", "Order is complete! Your payment was successful.");
+
+                    // Update Cart Status
+                    const checkoutResponse = await fetch('@Url.Action("CheckoutCart", "Cart")', {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        }
+                    });
+
+                    if (!checkoutResponse.ok) {
+                        throw new Error("Failed to update cart status.");
+                    }
+
+                    const checkoutResult = await checkoutResponse.json();
+                    if (checkoutResult.success) {
+                        console.log("Cart status updated to active.");
+                    } else {
+                        console.log("Failed to update cart status.");
+                    }
+                } else {
+                    throw new Error("Payment failed.");
+                }
+            } catch (error) {
+                console.error("Error completing order:", error);
+                showAlert("danger", "There was an issue completing your order.");
+            }
+        },
+
+        // On Payment Cancellation
+        onCancel(data) {
+            showAlert("warning", "Payment canceled! You have canceled the payment.");
+        },
+
+        // On Payment Error
+        onError(err) {
+            console.error("PayPal Error: ", err);
+            showAlert("danger", "Something went wrong with your payment.");
+        }
+    }).render("#paypal-button-container"); // Render PayPal buttons in the container
+
+    // Helper Function to Display Alerts
+    function showAlert(type, message) {
+        const alertClass = {
+            success: "alert-success",
+            warning: "alert-warning",
+            danger: "alert-danger"
+        }[type] || "alert-info";
+
+        const alertHtml = `
+            <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                <strong>${message}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+
+        document.getElementById("notification-container").innerHTML = alertHtml;
+    }
+</script>

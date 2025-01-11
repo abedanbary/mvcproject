@@ -1,0 +1,124 @@
+﻿/* General Design */
+body {
+    font-family: 'Poppins', sans-serif; /* Modern font */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/images/library.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: #fff; /* Light text for better contrast */
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    margin-top: 2rem;
+    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent white background */
+    padding: 2rem;
+    border-radius: 15px;
+    backdrop-filter: blur(10px); /* Blur effect for a modern look */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+h2 {
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-bottom: 2rem;
+    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent white background */
+    backdrop-filter: blur(10px); /* Blur effect */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+}
+
+    .card:hover {
+        transform: translateY(-5px); /* Lift the card on hover */
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+    }
+
+.card-header {
+    background-color: rgba(40, 167, 69, 0.9); /* Green with transparency */
+    color: white;
+    border-radius: 15px 15px 0 0;
+    padding: 1rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Tables */
+.table {
+    width: 100%;
+    margin-bottom: 0;
+    background-color: transparent; /* Transparent background */
+    color: #fff; /* Light text */
+}
+
+    .table th, .table td {
+        vertical-align: middle;
+        border-color: rgba(255, 255, 255, 0.1); /* Light border color */
+    }
+
+    .table th {
+        background-color: rgba(40, 167, 69, 0.9); /* Green with transparency */
+        color: white;
+        font-weight: 500;
+    }
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(255, 255, 255, 0.05); /* Light overlay for striped rows */
+}
+
+/* Icons */
+.fa {
+    margin-right: 0.5rem;
+    color: #28a745; /* Green */
+}
+
+/* Buttons */
+.btn {
+    border-radius: 25px; /* Rounded buttons */
+    padding: 0.5rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease; /* Smooth hover effect */
+}
+
+.btn-primary {
+    background-color: #28a745; /* Green */
+    border: none;
+}
+
+    .btn-primary:hover {
+        background-color: #218838; /* Darker green */
+        transform: translateY(-2px); /* Lift the button on hover */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow on hover */
+    }
+
+/* JavaScript Interactions */
+.hidden-row {
+    display: none;
+    transition: all 0.3s ease; /* Smooth transition */
+}
+
+.toggle-btn {
+    cursor: pointer;
+    color: #28a745; /* Green */
+    font-weight: 500;
+    transition: all 0.3s ease; /* Smooth hover effect */
+}
+
+    .toggle-btn:hover {
+        color: #218838; /* Darker green */
+        text-decoration: underline;
+    }
